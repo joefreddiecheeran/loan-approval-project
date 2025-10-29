@@ -38,9 +38,15 @@ pipeline {
         stage('Run Flask App') {
             steps {
                 sh '''#!/bin/bash
+                    echo "🧹 Stopping any existing Flask app..."
+                    pkill -f "python app/app.py" || echo "No existing Flask app running."
+
                     echo "🚀 Starting Flask app..."
                     source venv/bin/activate
                     nohup python app/app.py > flask.log 2>&1 &
+                    sleep 3
+                    echo "📄 Flask log preview:"
+                    tail -n 10 flask.log
                 '''
             }
         }
@@ -48,7 +54,7 @@ pipeline {
 
     post {
         success {
-            echo "✅ Build succeeded!"
+            echo "✅ Build succeeded and Flask is running!"
         }
         failure {
             echo "❌ Build failed. Please check the logs."
