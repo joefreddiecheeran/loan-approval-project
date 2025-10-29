@@ -1,5 +1,8 @@
 pipeline {
     agent any
+    options {
+        shell('/bin/bash')
+    }
 
     stages {
         stage('Clone Repository') {
@@ -10,7 +13,7 @@ pipeline {
 
         stage('Set up Python Environment') {
             steps {
-                sh '''#!/bin/bash
+                sh '''
                     python3 -m venv venv
                     source venv/bin/activate
                     pip install -r requirements.txt
@@ -21,8 +24,8 @@ pipeline {
         stage('Run Tests') {
             steps {
                 sh '''
-                source venv/bin/activate
-                pytest || echo "No tests found"
+                    source venv/bin/activate
+                    pytest || echo "No tests found"
                 '''
             }
         }
@@ -30,11 +33,10 @@ pipeline {
         stage('Run Flask App') {
             steps {
                 sh '''
-                source venv/bin/activate
-                nohup python app/app.py &
+                    source venv/bin/activate
+                    nohup python app/app.py &
                 '''
             }
         }
     }
 }
-
