@@ -1,5 +1,3 @@
-#!/bin/bash
-
 pipeline {
     agent any
 
@@ -13,6 +11,8 @@ pipeline {
         stage('Set up Python Environment') {
             steps {
                 sh '''
+                    #!/bin/bash
+                    set -e
                     python3 -m venv venv
                     source venv/bin/activate
                     pip install --upgrade pip
@@ -24,6 +24,8 @@ pipeline {
         stage('Run Tests') {
             steps {
                 sh '''
+                    #!/bin/bash
+                    set -e
                     source venv/bin/activate
                     pytest || echo "No tests found"
                 '''
@@ -33,6 +35,8 @@ pipeline {
         stage('Run Flask App') {
             steps {
                 sh '''
+                    #!/bin/bash
+                    set -e
                     source venv/bin/activate
                     nohup python app/app.py &
                     echo "Flask app started successfully!"
