@@ -1,0 +1,129 @@
+/* === GLOBAL STYLES === */
+body {
+    font-family: 'Space Grotesk', sans-serif;
+    background-color: #fafafa;
+    color: #111;
+    margin: 0;
+    padding: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+/* === CONTAINER === */
+.container {
+    background: #ffffff;
+    border: 3px solid #000;
+    padding: 40px;
+    width: 100%;
+    max-width: 650px;
+    border-radius: 0;
+    box-shadow: 8px 8px 0 #000;
+    transition: all 0.2s ease;
+}
+.container:hover {
+    box-shadow: 12px 12px 0 #000;
+}
+
+/* === HEADING === */
+h1 {
+    text-align: center;
+    font-size: 2rem;
+    font-weight: 900;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    border-bottom: 3px solid #000;
+    padding-bottom: 10px;
+    margin-bottom: 30px;
+}
+
+/* === FORM === */
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+label {
+    font-weight: 700;
+    margin-bottom: 5px;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+}
+input, select {
+    padding: 10px 12px;
+    border: 2px solid #000;
+    background: #f4f4f4;
+    font-size: 15px;
+    font-weight: 500;
+    color: #000;
+    transition: all 0.15s ease-in-out;
+}
+input:focus, select:focus {
+    outline: none;
+    background: #fff;
+    border-color: #007bff;
+    box-shadow: 4px 4px 0 #007bff;
+}
+
+/* === BUTTON === */
+button {
+    grid-column: span 2;
+    padding: 14px;
+    font-size: 1.1rem;
+    font-weight: 800;
+    border: 3px solid #000;
+    background-color: #ffdd00;
+    color: #000;
+    text-transform: uppercase;
+    cursor: pointer;
+    box-shadow: 5px 5px 0 #000;
+    transition: transform 0.1s, box-shadow 0.2s;
+    margin-top: 20px;
+    justify-self: center;
+}
+.button-container {
+    grid-column: span 2;
+    display: flex;
+    justify-content: center;
+}
+button:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 8px 8px 0 #000;
+}
+button:active {
+    transform: translate(1px, 1px);
+    box-shadow: 3px 3px 0 #000;
+}
+
+/* === RESULT === */
+#result {
+    display: none;
+    margin-top: 25px;
+    padding: 20px;
+    border: 3px solid #000;
+    font-weight: 800;
+    font-size: 1.1rem;
+    text-transform: uppercase;
+    box-shadow: 5px 5px 0 #000;
+}
+.approved {
+    background-color: #c4f7c4;
+}
+.rejected {
+    background-color: #f9b4b4;
+}
+
+/* === RESPONSIVE === */
+@media (max-width: 600px) {
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+    button {
+        grid-column: span 1;
+    }
+}
