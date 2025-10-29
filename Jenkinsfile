@@ -16,7 +16,7 @@ pipeline {
             steps {
                 sh '''#!/bin/bash
                     set -e
-                    echo "✅ Setting up Python virtual environment..."
+                    echo "Setting up Python virtual environment..."
                     python3 -m venv venv
                     source venv/bin/activate
                     pip install --upgrade pip
@@ -28,9 +28,9 @@ pipeline {
         stage('Run Tests') {
             steps {
                 sh '''#!/bin/bash
-                    echo "🧪 Running tests..."
+                    echo "Running tests..."
                     source venv/bin/activate
-                    pytest || echo "⚠️ No tests found"
+                    pytest || echo "No tests found"
                 '''
             }
         }
@@ -38,26 +38,30 @@ pipeline {
         stage('Run Flask App') {
             steps {
                 sh '''#!/bin/bash
-                    echo "🧹 Stopping any existing Flask app..."
+                    echo "Stopping any existing Flask app..."
                     pkill -f "python app/app.py" || echo "No existing Flask app running."
-
-                    echo "🚀 Starting Flask app..."
+                    sleep 2
+                    fuser -k 5000/tcp || echo "Port 5000 was free."
+        
+                    echo "Starting Flask app..."
                     source venv/bin/activate
                     nohup python app/app.py > flask.log 2>&1 &
                     sleep 3
-                    echo "📄 Flask log preview:"
+                    echo "Flask log preview:"
                     tail -n 10 flask.log
                 '''
             }
         }
+
     }
 
     post {
         success {
-            echo "✅ Build succeeded and Flask is running!"
+            echo "Build succeeded and Flask is running!"
         }
         failure {
-            echo "❌ Build failed. Please check the logs."
+            echo "Build failed. Please check the logs."
         }
     }
 }
+
