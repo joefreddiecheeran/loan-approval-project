@@ -38,20 +38,23 @@ pipeline {
         stage('Run Flask App') {
             steps {
                 sh '''#!/bin/bash
-                    echo "Stopping any existing Flask app..."
-                    pkill -f "python app/app.py" || echo "No existing Flask app running."
+                    echo "Cleaning up any old Flask process..."
+                    set -x
+                    # Find and kill any Flask process or python using port 5000
+                    sudo lsof -t -i:5000 | xargs -r sudo kill -9
+                    pkill -f "python app/app.py" || echo "No old Flask process."
                     sleep 2
-                    fuser -k 5000/tcp || echo "Port 5000 was free."
         
-                    echo "Starting Flask app..."
+                    echo "Starting Flask app on port 5000..."
                     source venv/bin/activate
                     nohup python app/app.py > flask.log 2>&1 &
                     sleep 3
                     echo "Flask log preview:"
-                    tail -n 10 flask.log
+                    tail -n 15 flask.log
                 '''
             }
         }
+
 
     }
 
@@ -64,4 +67,5 @@ pipeline {
         }
     }
 }
+
 
