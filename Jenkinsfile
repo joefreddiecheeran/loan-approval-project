@@ -21,6 +21,8 @@ pipeline {
                     source venv/bin/activate
                     pip install --upgrade pip
                     pip install -r requirements.txt
+                    # Install pytest for testing
+                    pip install pytest
                 '''
             }
         }
@@ -30,7 +32,8 @@ pipeline {
                 sh '''#!/bin/bash
                     echo "Running tests..."
                     source venv/bin/activate
-                    pytest || echo "No tests found"
+                    # Run pytest with verbose output
+                    python -m pytest -v || echo "No tests found or tests failed"
                 '''
             }
         }
@@ -39,23 +42,37 @@ pipeline {
             steps {
                 sh '''#!/bin/bash
                     echo "Cleaning up any old Flask process..."
-                    set -x
-                    # Find and kill any Flask process or python using port 5000
-                    sudo lsof -t -i:5000 | xargs -r sudo kill -9
-                    pkill -f "python app/app.py" || echo "No old Flask process."
+                    
+                    # Kill processes using port 5000 without sudo
+                    fuser -k 5000/tcp || echo "No process on port 5000"
+                    
+                    # Kill any python app processes
+                    pkill -f "python app/app.py" || echo "No existing Flask process found"
                     sleep 2
-        
+                    
                     echo "Starting Flask app on port 5000..."
                     source venv/bin/activate
+                    
+                    # Start Flask app in background
                     nohup python app/app.py > flask.log 2>&1 &
-                    sleep 3
+                    
+                    # Wait for app to start
+                    sleep 5
+                    
                     echo "Flask log preview:"
-                    tail -n 15 flask.log
+                    tail -n 20 flask.log
+                    
+                    # Check if Flask app is running
+                    echo "Checking if Flask app is running..."
+                    if curl -s http://localhost:5000 > /dev/null; then
+                        echo "✅ Flask app is running successfully!"
+                    else
+                        echo "❌ Flask app failed to start"
+                        exit 1
+                    fi
                 '''
             }
         }
-
-
     }
 
     post {
@@ -65,7 +82,13 @@ pipeline {
         failure {
             echo "Build failed. Please check the logs."
         }
+        always {
+            sh '''#!/bin/bash
+                echo "Final process check:"
+                ps aux | grep "python app/app.py" || echo "No Flask process found"
+                echo "Port 5000 status:"
+                netstat -tulpn | grep :5000 || echo "Port 5000 not in use"
+            '''
+        }
     }
 }
-
-
