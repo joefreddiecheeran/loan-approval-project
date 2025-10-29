@@ -1,8 +1,7 @@
+#!/bin/bash
+
 pipeline {
     agent any
-    options {
-        shell('/bin/bash')
-    }
 
     stages {
         stage('Clone Repository') {
@@ -16,6 +15,7 @@ pipeline {
                 sh '''
                     python3 -m venv venv
                     source venv/bin/activate
+                    pip install --upgrade pip
                     pip install -r requirements.txt
                 '''
             }
@@ -35,8 +35,18 @@ pipeline {
                 sh '''
                     source venv/bin/activate
                     nohup python app/app.py &
+                    echo "Flask app started successfully!"
                 '''
             }
+        }
+    }
+
+    post {
+        success {
+            echo "✅ Build completed successfully!"
+        }
+        failure {
+            echo "❌ Build failed. Please check the logs."
         }
     }
 }
