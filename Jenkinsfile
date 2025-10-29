@@ -1,6 +1,16 @@
 pipeline {
     agent any
 
+    // ✅ This ensures every 'sh' runs with bash instead of sh
+    options {
+        shell('/bin/bash')
+    }
+
+    environment {
+        // You can define global environment variables here if needed
+        PATH = "/usr/local/bin:/usr/bin:/bin"
+    }
+
     stages {
         stage('Clone Repository') {
             steps {
@@ -11,8 +21,8 @@ pipeline {
         stage('Set up Python Environment') {
             steps {
                 sh '''
-                    #!/bin/bash
                     set -e
+                    echo "✅ Setting up Python virtual environment..."
                     python3 -m venv venv
                     source venv/bin/activate
                     pip install --upgrade pip
@@ -24,10 +34,9 @@ pipeline {
         stage('Run Tests') {
             steps {
                 sh '''
-                    #!/bin/bash
-                    set -e
+                    echo "🧪 Running tests..."
                     source venv/bin/activate
-                    pytest || echo "No tests found"
+                    pytest || echo "⚠️ No tests found"
                 '''
             }
         }
@@ -35,11 +44,9 @@ pipeline {
         stage('Run Flask App') {
             steps {
                 sh '''
-                    #!/bin/bash
-                    set -e
+                    echo "🚀 Starting Flask app..."
                     source venv/bin/activate
-                    nohup python app/app.py &
-                    echo "Flask app started successfully!"
+                    nohup python app/app.py > flask.log 2>&1 &
                 '''
             }
         }
@@ -47,7 +54,7 @@ pipeline {
 
     post {
         success {
-            echo "✅ Build completed successfully!"
+            echo "✅ Build succeeded!"
         }
         failure {
             echo "❌ Build failed. Please check the logs."
