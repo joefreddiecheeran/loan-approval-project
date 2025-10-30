@@ -6,7 +6,6 @@ pipeline {
     }
 
     stages {
-
         stage('Clone Repository') {
             steps {
                 checkout scm
@@ -15,11 +14,9 @@ pipeline {
 
         stage('Set up Python Environment') {
             steps {
-                sh '''
-                    #!/bin/bash
+                sh '''#!/bin/bash
                     set -e
                     echo "Setting up Python virtual environment..."
-                    
                     python3 -m venv venv
                     source venv/bin/activate
                     pip install --upgrade pip
@@ -30,10 +27,8 @@ pipeline {
 
         stage('Run Tests') {
             steps {
-                sh '''
-                    #!/bin/bash
+                sh '''#!/bin/bash
                     echo "Running tests..."
-                    
                     source venv/bin/activate
                     pytest || echo "No tests found"
                 '''
@@ -42,10 +37,8 @@ pipeline {
 
         stage('Run Flask App') {
             steps {
-                sh '''
-                    #!/bin/bash
+                sh '''#!/bin/bash
                     echo "Starting Flask app..."
-                    
                     source venv/bin/activate
                     nohup python app/app.py > flask.log 2>&1 &
                 '''
