@@ -35,7 +35,7 @@ pipeline {
             }
         }
 
-        sstage('Run Flask App') {
+        stage('Run Flask App') {
             steps {
                 sh '''#!/bin/bash
                     echo "Stopping any existing Flask app on port 5000..."
@@ -91,5 +91,6 @@ pipeline {
         }
     }
 }
+
 
 
