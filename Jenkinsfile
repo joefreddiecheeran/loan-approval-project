@@ -38,9 +38,16 @@ pipeline {
         stage('Run Flask App') {
             steps {
                 sh '''#!/bin/bash
+                    echo "Stopping any existing Flask app on port 5000..."
+                    # Find and kill process using port 5000
+                    sudo fuser -k 5000/tcp || true
+                    # Alternative method if fuser not available:
+                    # PID=$(lsof -ti:5000) && kill -9 $PID || true
+                    
                     echo "Starting Flask app..."
                     source venv/bin/activate
                     nohup python app/app.py > flask.log 2>&1 &
+                    echo "Flask app started in background"
                 '''
             }
         }
@@ -55,3 +62,4 @@ pipeline {
         }
     }
 }
+
